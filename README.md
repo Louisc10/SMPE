@@ -1,6 +1,6 @@
 # SMPE
 
-*** Homeworks Week 1
+### Homeworks Week 1
 - [ ] Read Popper's text
 - [X] Indicate your name on the [[https://codimd.math.cnrs.fr/Dai2ZzqzTwezOMZVIyMN-g#][Pad]]. You will use to collaborate and fill in all the information you can.
 - [X] Register on the [[https://framateam.org/smpe-2023-2024/channels/town-square][Mattermost]] through this [[https://framateam.org/signup_user_complete/?id=yxk5rpuqdpds5b785t6ka94o4e&md=link&sbr=su][invitation link]]. This is the preferred communication mode.
