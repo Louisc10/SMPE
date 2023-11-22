@@ -1,0 +1,171 @@
+---
+title: "PointingXP"
+author: "Céline Coutrix"
+date: "11/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading libraries
+
+```{r loading ggplot2}
+library(ggplot2)
+```
+
+## Loading data
+
+```{r loading csv data into a dataframe}
+meanMTdf <- read.csv("./data/raw/20211117_1527_MeanMT.csv", header=T)
+rawdf <- read.csv("./data/raw/20211117_1527_RawData.csv", header=T)
+
+newrawdf = rawdf
+newrawdf$A = factor(newrawdf$A)
+```
+
+## Loading data
+
+- rawdf1
+  Error: 47
+  MT = 125.268 + 121.591log(A/W + 1)
+  RSquare = 0.926
+  Test Using Mouse
+  
+- rawdf2
+  Error: 2
+  MT = 318.948 + 193.058log(A/W + 1)
+  RSquare = 0.783
+  Test Using Touchpad
+  
+- rawdf3
+  Error: 4
+  MT = -139.313 + 411.273log(A/W + 1)
+  RSquare = 0.517
+  Test Using Mouse
+
+```{r loading csv data into a dataframe}
+meanMTdf1 <- read.csv("./data/raw/20231116_1504_MeanMT.csv", header=T)
+rawdf1 <- read.csv("./data/raw/20231116_1504_RawData.csv", header=T)
+
+newrawdf1 = rawdf1
+newrawdf1$A = factor(newrawdf1$A)
+
+meanMTdf2 <- read.csv("./data/raw/20231116_1518_MeanMT.csv", header=T)
+rawdf2 <- read.csv("./data/raw/20231116_1518_RawData.csv", header=T)
+
+newrawdf2 = rawdf2
+newrawdf2$A = factor(newrawdf2$A)
+
+meanMTdf3 <- read.csv("./data/raw/20231116_1642_MeanMT.csv", header=T)
+rawdf3 <- read.csv("./data/raw/20231116_1642_RawData.csv", header=T)
+
+newrawdf3 = rawdf3
+newrawdf3$A = factor(newrawdf3$A)
+```
+
+## Plotting the data together with the linear regression
+
+```{r Plotting the raw data together with the linear regression}
+ggplot(newrawdf, aes(ID, MT, color=A)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ggplot(newrawdf1, aes(ID, MT, color=A)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ggplot(newrawdf2, aes(ID, MT, color=A)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ggplot(newrawdf3, aes(ID, MT, color=A)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+## Plotting the data together with the linear regression
+
+```{r Plotting the raw data together with the linear regression}
+ggplot(meanMTdf, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') + 
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(rawdf, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') +  
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(meanMTdf1, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') +   
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(rawdf1, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') +  
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(meanMTdf2, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') + 
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(rawdf2, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') +  
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(meanMTdf3, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') + 
+  ylim(0,5500) +
+  xlim(1,6)
+
+ggplot(rawdf3, aes(ID, MT)) +
+  geom_point() +
+  geom_smooth(method='lm') +  
+  ylim(0,5500) +
+  xlim(1,6)
+```
+## Linear modelling
+
+```{r linear modeling}
+model <- lm(MT~ID, data = meanMTdf)
+summary(model)
+
+model <- lm(MT~ID, data = rawdf)
+summary(model)
+
+model <- lm(MT~ID, data = meanMTdf1)
+summary(model)
+
+model <- lm(MT~ID, data = rawdf1)
+summary(model)
+
+model <- lm(MT~ID, data = meanMTdf2)
+summary(model)
+
+model <- lm(MT~ID, data = rawdf2)
+summary(model)
+
+model <- lm(MT~ID, data = meanMTdf3)
+summary(model)
+
+model <- lm(MT~ID, data = rawdf3)
+summary(model)
+```
+
+Weirdly, in contrast to what Fitts' law says, ID does not seem to have an impact on the movement time. 
+Also, the R2=0.218 reported by the [experimental software](http://ergo.human.cornell.edu/FittsLaw/FittsLaw.html) and the R2=0.008146 I find here, are different. 
+
+
+Based on what I see, the number of error is didn't really affect the value of R2. The higher the value of ID, also mean higher value of MT in general. Some of it didn't really increased so much but for some test, the result will be higher. More or less the result that I get from the Website and also the result that I get from R is kinda similar, in note we need to use the Mean data value.
