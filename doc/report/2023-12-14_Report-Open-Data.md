@@ -1,7 +1,7 @@
 # Read both documents for next week. Write down what you learnt (what appears useful, what is surprising, …) and your opinion on potential biases in both documents
 
 =========================
-[First Document](https://digitalscience.figshare.com/articles/report/The_State_of_Open_Data_2023/24428194)
+[First Document](https://www.ouvrirlascience.fr/passport-for-open-science-a-practical-guide-for-phd-students/)
 
 There are more way to get the resource such as Specialist search engines (Unpaywall), Data warehouses (FAIRsharing.org), Databases for theses or academic works (Open Access Thesis and Dissertation), and Platforms for preprints or working papers (arXiv)
 
@@ -38,14 +38,23 @@ Several reason why we need to share the research data
 - Better guarantee of research transparency
 
 =========================
-[Second Doc](https://www.ouvrirlascience.fr/passport-for-open-science-a-practical-guide-for-phd-students/)
+[Second Doc](https://digitalscience.figshare.com/articles/report/The_State_of_Open_Data_2023/24428194)
 
+Key takeaways from the State of Open Data 2023
 
+- Support is not making its way to 
+those who need it
+	Most people didn't have access to support from specialist data manager
+- One size does not fit all
+	There some variations in responses from different subject expertise and geographies
+- Challenging stereotypes: are later career academics really opposed to progress?
+	Career length is not a significant factor in open data awareness or support levels
+- Credit is an ongoing issue
+	Researchers didn't feel they receive appropriate credit for openly sharing their research data
+- AI awareness hasn’t translated to action
+	Most people are aware of AI tools (such as ChatGPT) but haven’t considered to use it for data collection, processing and metadata collection
 
-
-
-
-
+Most people in current day, feel a need help regarding copyright, managing the research data, and data management policies.
 
 
 
