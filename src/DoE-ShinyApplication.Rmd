@@ -1,0 +1,20 @@
+---
+title: "Find the maximum of the secret function"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+Given a website to provide datasets (https://adaphetnodes.shinyapps.io/design_of_experiments/?user_e7268) 
+From this website we are expected to give at least one experiment with 11 values. Each values divided by commas and each experiment divided by newline. We are allowed to create 10000 datasets at max. We expected to find a maximum value of secret function that takes 11 values.
+
+
+We try to analyze the impact of each value 
+```{r paged.print=FALSE}
+d1 <- read.csv("data/raw/20240118_0128_user_e7268-DoEShinnyApplication.csv")
+res <- lm(data=d1, y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10 + x11)
+summary(res)
+anova(res)
+```
+From here I can see the value of x4 and x9 is really significant. and based on the result given, its better to give the value of x1, x4, x5, x6, and x11 closer to 1 and give x2, x3, x7, x8, x9, and x10 closer to 0.
