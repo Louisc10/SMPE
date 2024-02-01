@@ -1,20 +1,187 @@
 ---
 title: "Find the maximum of the secret function"
 output:
+  word_document: default
   pdf_document: default
   html_document:
     df_print: paged
 ---
 
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+
 Given a website to provide datasets (https://adaphetnodes.shinyapps.io/design_of_experiments/?user_e7268) 
 From this website we are expected to give at least one experiment with 11 values. Each values divided by commas and each experiment divided by newline. We are allowed to create 10000 datasets at max. We expected to find a maximum value of secret function that takes 11 values.
+
+In here we are reading the data file from the csv and get a view of the value that containted for each variable.
+```{r}
+d1 <- read.csv("data/raw/20240118_0128_user_e7268-DoEShinnyApplication.csv")
+summary(d1)
+```
+
+Now let's try to see the value in graph, maybe we can find the connection or interaction between variable.
+```{r}
+plot(d1)
+```
+I cannot see something clearly from this plot. Let's focus to the result that we have
+
+```{r}
+d1 %>% select(-Date) %>% gather() %>% filter(key == "y") %>% ggplot(aes(x=value, group=key)) + geom_histogram()
+```
+So far, i can see the value of Y is normally around 1 but there a result that give 2 or more.
 
 
 We try to analyze the impact of each value 
 ```{r paged.print=FALSE}
-d1 <- read.csv("data/raw/20240118_0128_user_e7268-DoEShinnyApplication.csv")
 res <- lm(data=d1, y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10 + x11)
 summary(res)
 anova(res)
 ```
-From here I can see the value of x4 and x9 is really significant. and based on the result given, its better to give the value of x1, x4, x5, x6, and x11 closer to 1 and give x2, x3, x7, x8, x9, and x10 closer to 0.
+From here I can see the value of x4 and x9 is really significant.
+
+```{r}
+d1 %>% select(-Date) -> df
+plot(df[,c(4,9,12)])
+```
+From the graph above, we can assume that if we want to get a higher value of y, we should put x4 closer to 1 and x9 closer to 0.
+
+
+Just for another test case, let's try to create more data set. Since the previous one, the data that we use are more to 0 and 1 and just a few of them are between of them. Therefore, I create a C program to generate the random data.
+
+```{}
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int cr=100;
+    int row = 11;
+    for(int i=0;i<cr;i++){
+        for(int j=0;j<row; j++){
+            float value = (rand()%100)/100.0;
+            printf("%.2f",value);
+            if(j+1< row) printf(",");
+        }
+        puts("");
+    }
+
+    return 0;
+}
+```
+Note: the code is not able to run in Rstudio (obviously), so I just run in with the C compiler. So now, let's try the new data set and let's try to do the same thing as previously.
+
+```{r}
+d2 <- read.csv("data/raw/20240201_0024_user_e7268-DoEShinnyApplication.csv")
+summary(d2)
+plot(d2)
+```
+
+well now it even harder to see from this plot. Let's try focus to the result and variable at seperate plot
+
+```{r}
+d2 %>% select(-Date) %>% gather() %>% filter(key != "y") %>% ggplot(aes(x=value, group=key)) + geom_histogram()
+
+d2 %>% select(-Date) %>% gather() %>% filter(key == "y") %>% ggplot(aes(x=value, group=key)) + geom_histogram()
+```
+Now as we can see the data is more well distributed and we found out that we might miss something since now we are able to get value higher than 3.
+
+
+let's try to analyze the impact of each value linearly again
+```{r paged.print=FALSE}
+res <- lm(data=d2, y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10 + x11)
+summary(res)
+anova(res)
+```
+Now we found out that x4, x9 are really significant, x1, x5 are significant and x10 is a bit significant.
+
+Let's try to focus again with their value and the distribution.
+```{r}
+d2 %>% select(-Date) -> df
+plot(df[,c(1,4,5,9,10,12)])
+```
+From what I able to see for now, I can assume that to get a high y, we need to have x1 around 0.7, x4 around 0.8, x5 around 0.9, x9 around 0.1, and x10 around 0.5 for now.
+
+
+```{r}
+ggplot(d2, aes(y=y, x=x1)) + geom_point() + geom_smooth(method="lm") + theme_bw()
+ggplot(d2, aes(y=y, x=x4)) + geom_point() + geom_smooth(method="lm") + theme_bw()
+ggplot(d2, aes(y=y, x=x5)) + geom_point() + geom_smooth(method="lm") + theme_bw()
+ggplot(d2, aes(y=y, x=x9)) + geom_point() + geom_smooth(method="lm") + theme_bw()
+ggplot(d2, aes(y=y, x=x10)) + geom_point() + geom_smooth(method="lm") + theme_bw()
+```
+From the graph above, we can see that x1 is not looks like a linear one, and for x4 and x5 looks like the give the impact to y in a good way (higher their value = higher y value) even though from the plot it didn't look affect to much. Meanwhile, for x9 and x10 they give bad impact for y (the higher their value = lower y value) especially x9.
+
+Let's try guess a new formula, especially for x1.
+```{r}
+res <- lm(data=d2, y ~ poly(x1,3) + x4 + x5 + x9 + x10)
+summary(res)
+anova(res)
+```
+Now, after we tried to change the formula, what we can see now, the value of x10 became not significant at all and the value of x5 became less significant. 
+
+Now, let's try to create a new dataset again with parameter as below
+- x1= between 0.65 and 0.85 (for sampling)
+- x4=1
+- x5=1
+- x9=0
+using the code below (it still in c)
+
+```{}
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int cr=40;
+    int row = 11;
+    for(int i=0;i<cr;i++){
+        for(int j=0;j<row; j++){
+            if(j == 0){
+                float value = (rand()%20)/100.0+0.65;
+                printf("%.2f",value);
+            }
+            else if(j==3 || j==4)
+                printf("1");
+            else if(j==8)
+                printf("0");
+            else{
+                float value = (rand()%100)/100.0;
+                printf("%.2f",value);
+            }
+            if(j+1< row) printf(",");
+        }
+        puts("");
+    }
+
+    return 0;
+}
+
+```
+
+let's view the new dataset
+```{r}
+d3 <- read.csv("data/raw/20240201_0109_user_e7268-DoEShinnyApplication.csv")
+d3 <- d3[137:176,]
+summary(d3)
+plot(d3)
+```
+
+Let's plot again:
+```{r}
+ggplot(df, aes(y=y, x=x1)) + geom_point() + geom_smooth() + geom_smooth(method = "lm", formula = y ~ poly(x,3), color="red") + theme_bw()
+```
+
+```{r}
+d3[d3$y==max(d3$y),]
+```
+
+Anyway, the optimal configuration is thus
+- x1=0.72
+- x4=1
+- x5=1
+- x9=0.
+All other parameters are of no importance and the optimal value for y is around 3.65.
